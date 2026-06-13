@@ -1,6 +1,7 @@
 # Rutas de datos
 ARCHIVO_DATOS = "output/datos_clusters_vitb14.csv"
 CARPETA_DESCARTES = "data/deleted"
+NOMBRE_MODELO_EMBEDDING = "DINOv2 ViT-B/14"
 
 # Estilos CSS (tema oscuro / tema claro)
 ESTILO_OSCURO = """
