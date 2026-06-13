@@ -42,7 +42,7 @@ Dependencia de desarrollo: `pytest`
 ```bash
 git clone https://github.com/sabdaipry/wildlife-image-dataset-curator.git
 cd wildlife-image-dataset-curator
-pip install PySide6 torch torchvision Pillow numpy pandas umap-learn matplotlib tqdm
+pip install -r requirements.txt
 ```
 
 ## Uso
