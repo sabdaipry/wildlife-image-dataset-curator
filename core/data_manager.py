@@ -42,7 +42,7 @@ class DataManager(QObject):
         if self.df.empty: return [], [], [], []
         df_activos = self.df[self.df['estado'] == 'activo']
         if df_activos.empty: return [], [], [], []
-        columna_color = 'familia'
+        columna_color = 'family'
         if columna_color in df_activos.columns:
             colores = df_activos[columna_color].astype('category').cat.codes
         else:
@@ -67,7 +67,7 @@ class DataManager(QObject):
         errores, movidos = 0, 0
         for idx in indices:
             registro = self.df.iloc[idx]
-            ruta_origen = str(registro['ruta_absoluta'])
+            ruta_origen = str(registro['absolute_path'])
             carpeta_destino, ruta_destino = self._calcular_ruta_destino(ruta_origen)
             if not os.path.exists(carpeta_destino):
                 os.makedirs(carpeta_destino, exist_ok=True)
@@ -100,17 +100,17 @@ class DataManager(QObject):
 
     def get_estadisticas_detalladas(self):
         if self.df.empty: return pd.DataFrame()
-        conteo = self.df.groupby(['nombre_cientifico', 'estado']).size().unstack(fill_value=0)
+        conteo = self.df.groupby(['scientific_name', 'estado']).size().unstack(fill_value=0)
         if 'activo' not in conteo.columns: conteo['activo'] = 0
         if 'borrado' not in conteo.columns: conteo['borrado'] = 0
-        metadata = self.df.groupby('nombre_cientifico')[['nombre_comun', 'familia', 'genero']].first()
+        metadata = self.df.groupby('scientific_name')[['common_name', 'family', 'genus']].first()
         df_final = pd.concat([metadata, conteo], axis=1)
         df_final['total_original'] = df_final['activo'] + df_final['borrado']
         return df_final.sort_values('total_original', ascending=False)
 
     def get_estadisticas_familias(self):
         if self.df.empty: return pd.DataFrame()
-        conteo = self.df.groupby(['familia', 'estado']).size().unstack(fill_value=0)
+        conteo = self.df.groupby(['family', 'estado']).size().unstack(fill_value=0)
         if 'activo' not in conteo.columns: conteo['activo'] = 0
         if 'borrado' not in conteo.columns: conteo['borrado'] = 0
         conteo['total_original'] = conteo['activo'] + conteo['borrado']
@@ -121,8 +121,8 @@ class DataManager(QObject):
         total_imgs = len(self.df)
         borradas = len(self.df[self.df['estado'] == 'borrado'])
         return {
-            'n_especies': self.df['nombre_cientifico'].nunique(),
-            'n_familias': self.df['familia'].nunique(),
+            'n_especies': self.df['scientific_name'].nunique(),
+            'n_familias': self.df['family'].nunique(),
             'total_imgs': total_imgs,
             'activas': total_imgs - borradas,
             'borradas': borradas,
@@ -133,7 +133,7 @@ class DataManager(QObject):
         restaurados, errores = 0, 0
         for idx in indices_borrados:
             registro = self.df.iloc[idx]
-            ruta_original = str(registro['ruta_absoluta'])
+            ruta_original = str(registro['absolute_path'])
             carpeta_deleted, ruta_actual_deleted = self._calcular_ruta_destino(ruta_original)
             try:
                 if os.path.exists(ruta_actual_deleted):

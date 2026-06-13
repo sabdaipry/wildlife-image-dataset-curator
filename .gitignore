@@ -10,3 +10,7 @@ __pycache__/
 # Entornos
 .env
 venv/
+
+# Data y outputs
+data/
+output/

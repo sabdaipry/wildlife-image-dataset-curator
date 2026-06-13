@@ -141,7 +141,7 @@ class CuratorMainWindow(QMainWindow):
             reg = self.manager.get_info_registro(idx)
             if reg['estado'] == 'borrado':
                 continue
-            item = QListWidgetItem(f"{reg['archivo']} ({reg.get('nombre_comun','?')})")
+            item = QListWidgetItem(f"{reg['filename']} ({reg.get('common_name','?')})")
             item.setData(Qt.UserRole, int(idx))
             item.setCheckState(Qt.Checked)
             self.files_list.addItem(item)
@@ -162,7 +162,7 @@ class CuratorMainWindow(QMainWindow):
             return
 
         self.files_list.clear()
-        item = QListWidgetItem(f"{reg['archivo']}")
+        item = QListWidgetItem(f"{reg['filename']}")
         item.setData(Qt.UserRole, int(idx))
         item.setCheckState(Qt.Checked)
         self.files_list.addItem(item)
@@ -176,12 +176,12 @@ class CuratorMainWindow(QMainWindow):
         idx = item.data(Qt.UserRole)
         reg = self.manager.get_info_registro(idx)
 
-        familia = reg.get('family', reg.get('familia', 'Desconocida'))
-        genero = reg.get('genus', reg.get('genero', 'Desconocido'))
-        nombre_comun = reg.get('nombre_comun', 'Sin nombre común')
-        nombre_cientifico = reg.get('nombre_cientifico', 'Scientific Name')
+        family = reg.get('family', 'Unknown')
+        genus = reg.get('genus', 'Unknown')
+        common_name = reg.get('common_name', 'Unknown')
+        scientific_name = reg.get('scientific_name', 'Unknown')
 
-        ruta = str(reg['ruta_absoluta'])
+        ruta = str(reg['absolute_path'])
         exists_on_disk = os.path.exists(ruta)
 
         if exists_on_disk:
@@ -192,9 +192,9 @@ class CuratorMainWindow(QMainWindow):
                               "⚠️ IMAGEN NO DISPONIBLE<br><span style='font-size:12px'>"
                               "(Archivo eliminado o movido)</span></h2>")
 
-        texto = (f"<h2 style='margin:0'>{nombre_comun}</h2>"
-                 f"<i style='color:#888; font-size: 14px'>{nombre_cientifico}</i><br>"
-                 f"<b>Familia:</b> {familia} | <b>Género:</b> {genero}"
+        texto = (f"<h2 style='margin:0'>{common_name}</h2>"
+                 f"<i style='color:#888; font-size: 14px'>{scientific_name}</i><br>"
+                 f"<b>Familia:</b> {family} | <b>Género:</b> {genus}"
                  f"</p>"
                  f"{status_warning}")
         self.lbl_info.setText(texto)

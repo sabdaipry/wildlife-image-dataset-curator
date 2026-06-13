@@ -100,9 +100,9 @@ class StatisticsPanel(QWidget):
         t = self.tabla_familias
         t.setSortingEnabled(False)
         t.setRowCount(len(df))
-        for row, (familia, registro) in enumerate(df.iterrows()):
+        for row, (family, registro) in enumerate(df.iterrows()):
             items = [
-                QTableWidgetItem(str(familia)),
+                QTableWidgetItem(str(family)),
                 QTableWidgetItem(), QTableWidgetItem(), QTableWidgetItem()
             ]
             items[1].setData(Qt.DisplayRole, int(registro['total_original']))
@@ -119,18 +119,18 @@ class StatisticsPanel(QWidget):
         t.setRowCount(len(df))
         COLOR_RED = QColor("#ffcccc")
         COLOR_YELLOW = QColor("#ffffcc")
-        for row, (n_cientifico, registro) in enumerate(df.iterrows()):
-            n_comun = str(registro['nombre_comun'])
-            familia = str(registro['familia'])
-            genero = str(registro['genero'])
+        for row, (scientific_name, registro) in enumerate(df.iterrows()):
+            n_comun = str(registro['common_name'])
+            family = str(registro['family'])
+            genus = str(registro['genus'])
             activo = int(registro['activo'])
             borrado = int(registro['borrado'])
             total = int(registro['total_original'])
             items = [
-                QTableWidgetItem(str(n_cientifico)),
+                QTableWidgetItem(str(scientific_name)),
                 QTableWidgetItem(n_comun),
-                QTableWidgetItem(familia),
-                QTableWidgetItem(genero),
+                QTableWidgetItem(family),
+                QTableWidgetItem(genus),
                 QTableWidgetItem(), QTableWidgetItem(), QTableWidgetItem()
             ]
             items[4].setData(Qt.DisplayRole, total)
