@@ -2,94 +2,17 @@ import sys
 import os
 import pandas as pd
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
-                               QHBoxLayout, QLabel, QFrame, QPushButton, QMessageBox,
-                               QGraphicsView, QGraphicsScene, QListWidget, QListWidgetItem,
-                               QCheckBox, QAbstractItemView, QSplitter, QTableWidget, QTableWidgetItem,
+                               QHBoxLayout, QLabel, QPushButton, QMessageBox,
+                               QListWidget, QListWidgetItem,
+                               QAbstractItemView, QSplitter, QTableWidget, QTableWidgetItem,
                                QHeaderView, QTabWidget, QFileDialog)
-from PySide6.QtGui import QPixmap, QColor, QPalette, QAction, QFont, QBrush
-from PySide6.QtCore import Qt, QRectF
+from PySide6.QtGui import QColor, QFont, QBrush
+from PySide6.QtCore import Qt
 
 from config import ARCHIVO_DATOS, CARPETA_DESCARTES, ESTILOS, NOMBRE_MODELO_EMBEDDING
 from core.data_manager import DataManager
 from ui.umap_widget import UMAPWidget
-
-
-class VisorZoomWidget(QGraphicsView):
-    """Tu visor de imágenes original, encapsulado."""
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.scene = QGraphicsScene(self)
-        self.setScene(self.scene)
-
-        # Comportamiento de arrastre (Pan)
-        self.setDragMode(QGraphicsView.ScrollHandDrag)
-        self.setFrameShape(QFrame.NoFrame)
-
-        # Configuración de Anclas para que el zoom siga al mouse
-        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
-
-        # Ocultamos barras de scroll (el usuario navega con drag & drop)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-        # CONTROL DE ZOOM: 1.0 significa el tamaño "fit" original
-        self._current_zoom = 1.0
-
-    def cargar_imagen(self, ruta):
-        self.scene.clear()
-
-        # Validaciones básicas
-        if not os.path.exists(ruta): return False
-
-        pixmap = QPixmap(ruta)
-        if pixmap.isNull(): return False
-
-        # Agregamos la imagen a la escena
-        item = self.scene.addPixmap(pixmap)
-
-        # Ajustamos la vista para que la imagen quepa entera al principio
-        self.scene.setSceneRect(QRectF(pixmap.rect()))
-        self.fitInView(item, Qt.KeepAspectRatio)
-        return True
-
-    def wheelEvent(self, event):
-        """Maneja el zoom con la rueda del mouse"""
-
-        # preguntamos si la escena tiene ítems.
-        if not self.scene.items(): return False
-
-        # Lógica de Zoom
-        zoom_factor = 1.15
-
-        if event.angleDelta().y() > 0:
-            # --- ZOOM IN (Acercar) ---
-            # Siempre permitido
-            self.scale(zoom_factor, zoom_factor)
-            self._current_zoom *= zoom_factor
-        else:
-            # --- ZOOM OUT (Alejar) ---
-            # Calculamos a cuánto se iría el zoom si permitimos alejar
-            nuevo_zoom_teorico = self._current_zoom / zoom_factor
-
-            if nuevo_zoom_teorico < 1.0:
-                # BLOQUEO: Si el nuevo zoom sería menor que el original (1.0),
-                # calculamos el factor exacto para volver a 1.0 clavado y no bajar más.
-
-                # Matematicamente: Queremos ir de _current_zoom a 1.0
-                # Factor = Destino / Origen = 1.0 / _current_zoom
-                if self._current_zoom > 1.0:
-                    factor_correccion = 1.0 / self._current_zoom
-                    self.scale(factor_correccion, factor_correccion)
-                    self._current_zoom = 1.0
-
-                # Si ya estamos en 1.0, no hacemos nada (ignoramos el scroll)
-            else:
-                # Si estamos lejos (ej: 2.5x), permitimos alejar normalmente
-                self.scale(1 / zoom_factor, 1 / zoom_factor)
-                self._current_zoom = nuevo_zoom_teorico
-
-        event.accept() # Le decimos a Qt que ya manejamos el evento
+from ui.visor_zoom_widget import VisorZoomWidget
 
 # =============================================================================
 # CAPA 3: VENTANA PRINCIPAL (Orquestador)
