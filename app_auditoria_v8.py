@@ -20,96 +20,7 @@ from matplotlib.widgets import LassoSelector
 from matplotlib.path import Path
 from matplotlib.colors import ListedColormap
 
-# --- CONFIGURACIÓN GLOBAL ---
-CONFIG = {
-    "ARCHIVO_DATOS": "output/datos_clusters_vitb14.csv",
-    "CARPETA_DESCARTES": "data/deleted",
-    "ESTILOS": {
-        "oscuro": """
-            QMainWindow, QWidget { background-color: #2d2d2d; color: #e0e0e0; }
-            QLabel { color: #e0e0e0; font-weight: bold; }
-            QListWidget { background-color: #1e1e1e; color: #e0e0e0; border: 1px solid #444; }
-            /* Botón Tema: Gris medio con texto blanco brillante */
-            QPushButton#btn_tema { background-color: #444; color: white; border: 1px solid #666; border-radius: 5px; font-size: 16px; }
-            QPushButton#btn_tema:hover { background-color: #555; }
-            /* Botón Borrar */
-            QPushButton#btn_borrar { background-color: #8B0000; color: white; border-radius: 5px; padding: 5px; font-weight: bold; }
-            QPushButton#btn_borrar:disabled { background-color: #442222; color: #888; }
-            /* Checkbox */
-            QCheckBox { color: #e0e0e0; spacing: 5px; }
-            /* MessageBox */
-            QMessageBox { background-color: #2d2d2d; color: white; }
-            QMessageBox QLabel { color: white; }
-            QMessageBox QPushButton { background-color: #444; color: white; min-width: 80px; padding: 5px; }
-            /* Botón Lazo (Interruptor) */
-            QPushButton#btn_lazo { background-color: #444; color: #aaa; border: 1px solid #666; border-radius: 4px; padding: 5px; }
-            QPushButton#btn_lazo:checked { background-color: #008800; color: white; border: 1px solid #00aa00; }
-            QPushButton#btn_lazo:hover { border: 1px solid #888; }
-            /* Pestañas */
-            QTabWidget::pane { border: 1px solid #444; }
-            QTabBar::tab { background: #333; color: #aaa; padding: 8px 20px; border-top-left-radius: 4px; border-top-right-radius: 4px; margin-right: 2px; }
-            QTabBar::tab:selected { background: #555; color: white; font-weight: bold; border-bottom: 2px solid #00aa00; }
-            /* --- TABLAS (QTableWidget) --- */
-            QTableWidget {
-                background-color: #1e1e1e;      /* Fondo de la tabla */
-                color: #f0f0f0;                 /* Texto por defecto (Blanco humo) */
-                gridline-color: #444444;        /* Líneas de la grilla */
-                border: 1px solid #444;
-                alternate-background-color: #2a2a2a; /* Color de la fila alternada */
-            }
-            /* Encabezados (Header) */
-            QHeaderView::section {
-                background-color: #333333;      /* Fondo del encabezado */
-                color: white;                   /* Texto del encabezado */
-                padding: 4px;
-                border: 1px solid #555;
-                font-weight: bold;
-            }
-            /* La esquina superior izquierda vacía */
-            QTableCornerButton::section {
-                background-color: #333333;
-                border: 1px solid #555;
-            }
-        """,
-        "claro": """
-            QMainWindow, QWidget { background-color: #f0f0f0; color: black; }
-            QLabel { color: black; font-weight: bold; }
-            QListWidget { background-color: white; color: black; border: 1px solid #ccc; }
-            /* Botón Tema: Blanco con borde */
-            QPushButton#btn_tema { background-color: white; color: #333; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
-            QPushButton#btn_tema:hover { background-color: #e6e6e6; }
-            /* Botón Borrar */
-            QPushButton#btn_borrar { background-color: #cc0000; color: white; border-radius: 5px; padding: 5px; font-weight: bold; }
-            QPushButton#btn_borrar:disabled { background-color: #ffcccc; color: #999; }
-            /* Checkbox */
-            QCheckBox { color: black; spacing: 5px; }
-            /* MessageBox */
-            QMessageBox { background-color: #f0f0f0; color: black; }
-            /* Botón Lazo (Interruptor) */
-            QPushButton#btn_lazo { background-color: #e0e0e0; color: #555; border: 1px solid #ccc; border-radius: 4px; padding: 5px; }
-            QPushButton#btn_lazo:checked { background-color: #4CAF50; color: white; border: 1px solid #388E3C; }
-            QPushButton#btn_lazo:hover { border: 1px solid #999; }
-            /* Pestañas */
-            QTabWidget::pane { border: 1px solid #ccc; }
-            QTabBar::tab { background: #e0e0e0; color: #555; padding: 8px 20px; border-top-left-radius: 4px; border-top-right-radius: 4px; margin-right: 2px; }
-            QTabBar::tab:selected { background: white; color: black; font-weight: bold; border-bottom: 2px solid #008800; }
-            /* --- TABLAS (QTableWidget) --- */
-            QTableWidget {
-                background-color: white;
-                color: black;
-                gridline-color: #ccc;
-                alternate-background-color: #f9f9f9;
-            }
-            /* Encabezados (Header) */
-            QHeaderView::section {
-                background-color: #e0e0e0;
-                color: black;
-                padding: 4px;
-                border: 1px solid #ccc;
-            }
-        """
-    }
-}
+from config import ARCHIVO_DATOS, CARPETA_DESCARTES, ESTILOS
 
 # =============================================================================
 # CAPA 1: MODELO Y LÓGICA DE NEGOCIO (Backend)
@@ -717,7 +628,7 @@ class AuditoriaMainWindow(QMainWindow):
         self.resize(1000, 700)
         
         # 1. Instanciar Lógica
-        self.manager = DataManager(CONFIG["ARCHIVO_DATOS"], CONFIG["CARPETA_DESCARTES"])
+        self.manager = DataManager(ARCHIVO_DATOS, CARPETA_DESCARTES)
         self.ventana_stats = None # Variable para guardar la ventana hija
         
         # 2. Configurar UI
@@ -987,7 +898,7 @@ class AuditoriaMainWindow(QMainWindow):
             
     def aplicar_tema_oscuro(self):
         # 1. Aplicar CSS Global (arregla QMessageBox y Textos)
-        self.setStyleSheet(CONFIG["ESTILOS"]["oscuro"])
+        self.setStyleSheet(ESTILOS["oscuro"])
         # 2. Configurar Gráfico
         self.umap_widget.set_tema(True)
         # 3. Configurar Visor
@@ -999,7 +910,7 @@ class AuditoriaMainWindow(QMainWindow):
         if self.ventana_stats: self.ventana_stats.set_tema(True)
 
     def aplicar_tema_claro(self):
-        self.setStyleSheet(CONFIG["ESTILOS"]["claro"])
+        self.setStyleSheet(ESTILOS["claro"])
         self.umap_widget.set_tema(False)
         self.visor.setBackgroundBrush(QColor("#f0f0f0"))
         # Icono Botón (Emoji Sol)
